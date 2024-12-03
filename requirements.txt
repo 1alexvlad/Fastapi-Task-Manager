@@ -1,0 +1,5 @@
+fastapi[all]==0.115.5
+sqlalchemy==2.0.36
+asyncpg==0.30.0
+pydantc==2.10.2
+alembic==1.14.0
