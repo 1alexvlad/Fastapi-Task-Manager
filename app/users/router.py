@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from app.users.schemas import SUser
 from app.users.service import UserService
 
@@ -16,4 +16,7 @@ async def get_all_users() -> List[SUser]:
 
 @router.get('/{id}', summary='Получить пользоваетеля по id')
 async def get_by_id_user(id: int) -> SUser:
-    return await UserService.find_by_id(id)
+    user = await UserService.find_by_id(id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    return user
