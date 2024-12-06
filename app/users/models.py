@@ -1,4 +1,7 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
+
+
 from app.database import Base
 
 
@@ -10,6 +13,8 @@ class Users(Base):
     last_name = Column(String, nullable=False)
     age = Column(Integer, nullable=False)
     email = Column(String, unique=True, nullable=False)
+
+    tasks = relationship('Tasks', back_populates='user')
 
     def __repr__(self):
         return f"<User(id={self.id}, first_name={self.first_name}, last_name={self.last_name}, age={self.age}, email={self.email})>"

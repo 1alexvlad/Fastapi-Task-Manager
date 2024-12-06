@@ -3,15 +3,17 @@ from sqlalchemy import String, Integer, Column, Text, ForeignKey, Date
 from sqlalchemy.orm import relationship
 
 from app.database import Base
+from app.users.models import Users
 
 
-class Priority(Enum):
+
+class Priority(str, Enum):
     low = 'Низкий'
     middle = 'Средний'
     high = 'Высокий'
 
 
-class Status(Enum):
+class Status(str, Enum):
     done = 'Выполнена'
     not_done = 'Не выполнена'
 
@@ -36,5 +38,7 @@ class Tasks(Base):
     category_id = Column(ForeignKey('category.id'), nullable=False)
     priority = Column(String, nullable=False)
     status = Column(String, nullable=False)
+    user_id = Column(ForeignKey('users.id'), nullable=False)
 
     category = relationship("Category", back_populates="tasks")
+    user = relationship('Users', back_populates='tasks')
