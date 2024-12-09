@@ -13,6 +13,7 @@ class Users(Base):
     last_name = Column(String, nullable=False)
     age = Column(Integer, nullable=False)
     email = Column(String, unique=True, nullable=False)
+    password = Column(String, nullable=False)
 
     tasks = relationship('Tasks', back_populates='user')
 

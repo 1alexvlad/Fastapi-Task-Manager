@@ -1,8 +1,10 @@
 from typing import List
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 from app.tasks.schemas import CategoryBase, CategoryCreate, TaskBase, TaskCreate, TaskUpdate
 from app.tasks.service import CategoryService, TaskService
+from app.users.models import Users
+from app.users.dependencies import get_current_user
 
 
 router_category = APIRouter(
@@ -37,10 +39,11 @@ async def delete_category_by_id(id: int):
     return {'message': 'Категория успешно удалена.'}
 
 
+@router_task.get('', summary='Получить все задачи пользователя')
+async def get_all_tasks(user: Users = Depends(get_current_user)) -> List[TaskBase]:
+    return await TaskService.find_all(user_id=user.id)
 
-@router_task.get('', summary='Получить все задачи')
-async def get_all_tasks() -> List[TaskBase]:
-    return await TaskService.find_all()
+
 
 @router_task.get('/{id}', summary='Получить задачу по id')
 async def get_task_by_id(id: int) -> TaskBase:
@@ -59,8 +62,8 @@ async def delete_task_by_id(id: int):
     return {'message': 'Task удалена'}
 
 
-@router_task.patch('/{id}', response_model=TaskBase, summary='Обновить задачу по ID')
-async def update_task(id: int, task_data: TaskUpdate) -> TaskBase:
+@router_task.patch('/{id}', response_model=TaskUpdate, summary='Обновить задачу по ID')
+async def update_task(id: int, task_data: TaskUpdate) -> TaskUpdate:
     existing_task = await TaskService.find_by_id(id)
     if not existing_task:
         raise HTTPException(status_code=404, detail='Задача не найдена')
