@@ -1,12 +1,12 @@
 from jose import jwt
 
+from fastapi.security import OAuth2PasswordBearer 
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from pydantic import EmailStr
 
 from app.users.service import UserService
 from app.config import settings
-
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -18,12 +18,21 @@ def verify_password(plain_password, hashed_password):
 
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + timedelta(minutes=30)
+    expire = datetime.now(timezone.utc) + timedelta(seconds=10)
     to_encode.update({'exp': expire})
     encoded_jwt = jwt.encode(
         to_encode, settings.SECRET_KEY, settings.ALGORITHM
     )
     return encoded_jwt
+
+async def create_refresh_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.now(timezone.utc) + timedelta(days=180)
+    to_encode.update({'exp': expire})
+    encoded_jwt = jwt.encode(
+        to_encode, settings.SECRET_KEY, settings.ALGORITHM
+    )
+    return encoded_jwt 
 
 
 async def authenticate_user(email: EmailStr, password: str):
