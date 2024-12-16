@@ -1,6 +1,5 @@
 from jose import jwt
 
-from fastapi.security import OAuth2PasswordBearer 
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from pydantic import EmailStr
@@ -18,7 +17,7 @@ def verify_password(plain_password, hashed_password):
 
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + timedelta(seconds=10)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=15)
     to_encode.update({'exp': expire})
     encoded_jwt = jwt.encode(
         to_encode, settings.SECRET_KEY, settings.ALGORITHM
